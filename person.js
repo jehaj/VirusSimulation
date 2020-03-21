@@ -38,6 +38,7 @@ class Person {
             this.time = random(0, 10000);
             this.advancement = random(0.002, 0.1);
         } else if (movementType == "optionRandom") {
+            // hastigheden skal være hurtigere
             this.speed += 0.5;
         }
     }
@@ -71,10 +72,15 @@ class Person {
     }
 
     infect() {
+        this.infected = true;
+    }
 
+    cure() {
+        this.infected = false;
+        this.cured = true;
     }
 
     die() {
-
+        this.alive = false;
     }
 }
