@@ -21,6 +21,7 @@ function draw() {
     // normal code
     if (programRunning) {
         background(52, 58, 64);
+        sim.move();
         sim.display();
     } else {
         background(200, 20, 20);
