@@ -64,6 +64,12 @@ class Person {
         point(this.x, this.y);
     }
 
+    isColliding(otherPerson) {
+        let calculatedDistance = dist(this.x, this.y, otherPerson.x, otherPerson.y);
+        let distanceSmallEnough = calculatedDistance < (this.diameter/2 + otherPerson.diameter/2);
+        return distanceSmallEnough;
+    }
+
     infect() {
 
     }
