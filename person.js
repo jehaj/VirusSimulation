@@ -59,12 +59,13 @@ class Simulation {
 
                 for (let point of cell.points) {
                     for (let otherPoint of pointsToCollideAgainst) {
-                        if (!otherPoint.hasCheckedCollisionThisTurn) {
-                            if (point.isColliding(otherPoint) && !point.currentlyCollidingWith.includes(otherPoint)) {
+                        if (!otherPoint.hasCheckedCollisionThisTurn && (point.infected || otherPoint.infected) && !(point.infected && otherPoint.infected)) {
+                            let areYouColliding = point.isColliding(otherPoint);
+                            if (areYouColliding && !point.currentlyCollidingWith.includes(otherPoint)) {
                                 point.currentlyCollidingWith.push(otherPoint);
                                 this.collision(point, otherPoint);
                                 this.collision(otherPoint, point);
-                            } else if (point.currentlyCollidingWith.includes(otherPoint)) {
+                            } else if (!areYouColliding && point.currentlyCollidingWith.includes(otherPoint)) {
                                 let index = point.currentlyCollidingWith.indexOf(otherPoint);
                                 if (index !== -1) {
                                     point.currentlyCollidingWith.splice(index, 1);
