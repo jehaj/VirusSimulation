@@ -57,23 +57,15 @@ class Simulation {
                 let cell = row[j];
                 let pointsToCollideAgainst = this.grid.rows[i][j].points.concat(this.grid.getNeighbouringPoints(i, j));
 
-
                 for (let point of cell.points) {
-                    point.hasCheckedCollisionThisTurn = true;
-
                     for (let otherPoint of pointsToCollideAgainst) {
-                        if ((point.infected || otherPoint.infected) && (!point.infected && !point.infected)) {
-                            // check if colliding
-                            if (point.isColliding(otherPoint) && !point.currentlyCollidingWith.includes(otherPoint)) {
-                                // make sure you dont collide next frame
+                        if (!otherPoint.hasCheckedCollisionThisTurn && (point.infected || otherPoint.infected) && !(point.infected && otherPoint.infected)) {
+                            let areYouColliding = point.isColliding(otherPoint);
+                            if (areYouColliding && !point.currentlyCollidingWith.includes(otherPoint)) {
                                 point.currentlyCollidingWith.push(otherPoint);
-                                // now make a choice to infect or cure
-                                // print("Der er sket en collision");
                                 this.collision(point, otherPoint);
                                 this.collision(otherPoint, point);
-                            }
-                            // if you are not colliding check if it should be removed from colliding list
-                            else if (point.currentlyCollidingWith.includes(otherPoint)) {
+                            } else if (!areYouColliding && point.currentlyCollidingWith.includes(otherPoint)) {
                                 let index = point.currentlyCollidingWith.indexOf(otherPoint);
                                 if (index !== -1) {
                                     point.currentlyCollidingWith.splice(index, 1);
@@ -81,9 +73,9 @@ class Simulation {
                             }
                         }
                     }
+
+                    point.hasCheckedCollisionThisTurn = true;
                 }
-
-
 
             }
         }
