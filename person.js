@@ -23,7 +23,7 @@ class Simulation {
                 let otherPoint = this.listOfPersons[j];
                 // check if you should collide: alive - hasnt collided
                 // - not cured - didnt collide last turn
-                if ((point.infected || otherPoint.infected) && (!point.infected && !point.infected) && !otherPoint.hasCheckedCollisionThisTurn) {
+                if ((point.infected || otherPoint.infected) && (!point.infected && !point.infected)) {
                     otherPoint.hasCheckedCollisionThisTurn = true;
                     // check if colliding
                     if (point.isColliding(otherPoint) && !point.currentlyCollidingWith.includes(otherPoint)) {
@@ -51,49 +51,53 @@ class Simulation {
         this.grid = new Grid();
         this.grid.initializeGrid(this.listOfPersons);
 
-        for (let i = 0; i < this.grid.rows.length; i += 1) {
+        for (let i = 0; i < this.grid.rows.length; i++) {
             let row = this.grid.rows[i];
-            for (let j = 0; j < row.length; j += 1) {
+            for (let j = 0; j < row.length; j++) {
                 let cell = row[j];
                 let pointsToCollideAgainst = this.grid.rows[i][j].points.concat(this.grid.getNeighbouringPoints(i, j));
 
-
                 for (let point of cell.points) {
-                    point.hasCheckedCollisionThisTurn = true;
+                    if (!point.hasCheckedCollisionThisTurn) {
+                        for (let otherPoint of pointsToCollideAgainst) {
+                            if (!otherPoint.hasCheckedCollisionThisTurn) {
 
-                    for (let otherPoint of pointsToCollideAgainst) {
-                        if ((point.infected || otherPoint.infected) && (!point.infected && !point.infected)) {
-                            // check if colliding
-                            if (point.isColliding(otherPoint) && !point.currentlyCollidingWith.includes(otherPoint)) {
-                                // make sure you dont collide next frame
-                                point.currentlyCollidingWith.push(otherPoint);
-                                // now make a choice to infect or cure
-                                // print("Der er sket en collision");
-                                this.collision(point, otherPoint);
-                                this.collision(otherPoint, point);
-                            }
-                            // if you are not colliding check if it should be removed from colliding list
-                            else if (point.currentlyCollidingWith.includes(otherPoint)) {
-                                let index = point.currentlyCollidingWith.indexOf(otherPoint);
-                                if (index !== -1) {
-                                    point.currentlyCollidingWith.splice(index, 1);
+                                if (point.infected || point.isDoctor) {
+                                    if (point.isColliding(otherPoint)) {
+                                        // add to colliding arrays
+                                        point.currentlyCollidingWith.push(otherPoint);
+                                        otherPoint.currentlyCollidingWith.push(point);
+                                        // point is the iniator
+                                        this.collision(point, otherPoint);
+                                    }
+                                }
+                                if (point.isColliding(otherPoint)) {
+                                    // add to colliding arrays
+                                    point.currentlyCollidingWith.push(otherPoint);
+                                    otherPoint.currentlyCollidingWith.push(point);
+                                    // point is the iniator
+                                    this.collision(point, otherPoint);
+                                    // otherPoint is the iniator
+                                    this.collision(otherPoint, point);
+
                                 }
                             }
                         }
                     }
+                    point.hasCheckedCollisionThisTurn = true;
                 }
-
-
 
             }
         }
     }
+
 
     collision(point, otherPoint) {
         if (point.infected) {
             let randomNumber = random();
             if (randomNumber <= Person.chanceOfInfection) {
                 otherPoint.infect();
+
             }
         } else if (point.isDoctor) {
 
@@ -210,6 +214,9 @@ class Person {
 
     die() {
         this.alive = false;
+        this.isDoctor = false;
+        this.infected = false;
+        this.cured = false;
     }
 }
 
