@@ -23,7 +23,7 @@ class Simulation {
                 let otherPoint = this.listOfPersons[j];
                 // check if you should collide: alive - hasnt collided
                 // - not cured - didnt collide last turn
-                if ((point.infected || otherPoint.infected) && (!point.infected && !point.infected)) {
+                if ((point.infected || otherPoint.infected) && (!point.infected && !point.infected) && !otherPoint.hasCheckedCollisionThisTurn) {
                     otherPoint.hasCheckedCollisionThisTurn = true;
                     // check if colliding
                     if (point.isColliding(otherPoint) && !point.currentlyCollidingWith.includes(otherPoint)) {
@@ -51,39 +51,28 @@ class Simulation {
         this.grid = new Grid();
         this.grid.initializeGrid(this.listOfPersons);
 
-        for (let i = 0; i < this.grid.rows.length; i++) {
+        for (let i = 0; i < this.grid.rows.length; i += 1) {
             let row = this.grid.rows[i];
-            for (let j = 0; j < row.length; j++) {
+            for (let j = 0; j < row.length; j += 1) {
                 let cell = row[j];
                 let pointsToCollideAgainst = this.grid.rows[i][j].points.concat(this.grid.getNeighbouringPoints(i, j));
 
                 for (let point of cell.points) {
-                    if (!point.hasCheckedCollisionThisTurn) {
-                        for (let otherPoint of pointsToCollideAgainst) {
-                            if (!otherPoint.hasCheckedCollisionThisTurn) {
-
-                                if (point.infected || point.isDoctor) {
-                                    if (point.isColliding(otherPoint)) {
-                                        // add to colliding arrays
-                                        point.currentlyCollidingWith.push(otherPoint);
-                                        otherPoint.currentlyCollidingWith.push(point);
-                                        // point is the iniator
-                                        this.collision(point, otherPoint);
-                                    }
-                                }
-                                if (point.isColliding(otherPoint)) {
-                                    // add to colliding arrays
-                                    point.currentlyCollidingWith.push(otherPoint);
-                                    otherPoint.currentlyCollidingWith.push(point);
-                                    // point is the iniator
-                                    this.collision(point, otherPoint);
-                                    // otherPoint is the iniator
-                                    this.collision(otherPoint, point);
-
+                    for (let otherPoint of pointsToCollideAgainst) {
+                        if (!otherPoint.hasCheckedCollisionThisTurn) {
+                            if (point.isColliding(otherPoint) && !point.currentlyCollidingWith.includes(otherPoint)) {
+                                point.currentlyCollidingWith.push(otherPoint);
+                                this.collision(point, otherPoint);
+                                this.collision(otherPoint, point);
+                            } else if (point.currentlyCollidingWith.includes(otherPoint)) {
+                                let index = point.currentlyCollidingWith.indexOf(otherPoint);
+                                if (index !== -1) {
+                                    point.currentlyCollidingWith.splice(index, 1);
                                 }
                             }
                         }
                     }
+
                     point.hasCheckedCollisionThisTurn = true;
                 }
 
@@ -91,13 +80,11 @@ class Simulation {
         }
     }
 
-
     collision(point, otherPoint) {
         if (point.infected) {
             let randomNumber = random();
             if (randomNumber <= Person.chanceOfInfection) {
                 otherPoint.infect();
-
             }
         } else if (point.isDoctor) {
 
@@ -214,9 +201,6 @@ class Person {
 
     die() {
         this.alive = false;
-        this.isDoctor = false;
-        this.infected = false;
-        this.cured = false;
     }
 }
 
