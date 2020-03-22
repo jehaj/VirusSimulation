@@ -4,7 +4,7 @@ class Simulation {
         for (let i = 0; i < simulationSize; i++) {
             this.listOfPersons.push(new Person());
         }
-        print("Har lavet en sim med " + simulationSize + " personer");
+        //print("Har lavet en sim med " + simulationSize + " personer");
     }
 
     move() {
@@ -22,14 +22,16 @@ class Simulation {
                 let otherPoint = this.listOfPersons[j];
                 // check if you should collide: alive - hasnt collided
                 // - not cured - didnt collide last turn
-                if (otherPoint.alive && !otherPoint.hasCheckedCollisionThisTurn &&
-                    !otherPoint.cured && !point.currentlyCollidingWith.includes(otherPoint)) {
+                if ((point.infected || point.isDoctor) &&
+                    otherPoint.alive && !otherPoint.hasCheckedCollisionThisTurn &&
+                    !otherPoint.cured) {
                     // check if colliding
-                    if (point.isColliding(otherPoint)) {
+                    if (point.isColliding(otherPoint) && !point.currentlyCollidingWith.includes(otherPoint)) {
                         // make sure you dont collide next frame
                         point.currentlyCollidingWith.push(otherPoint);
                         // now make a choice to infect or cure
                         print("Der er sket en collision");
+
                     }
                     // if you are not colliding check if it should be removed from colliding list
                     else if (point.currentlyCollidingWith.includes(otherPoint)) {
@@ -47,23 +49,27 @@ class Simulation {
         this.grid = new Grid();
         this.grid.initializeGrid(this.listOfPersons);
 
-        for (let i = 0; i < this.grid.rows.length; i += 2) {
+        for (let i = 0; i < this.grid.rows.length; i += 1) {
             let row = this.grid.rows[i];
-            for (let j = 0; j < row.length; j += 2) {
+            for (let j = 0; j < row.length; j += 1) {
                 let cell = row[j];
                 let pointsToCollideAgainst = this.grid.rows[i][j].points.concat(this.grid.getNeighbouringPoints(i, j));
 
                 
                 for (let point of cell.points) {
+                point.hasCheckedCollisionThisTurn = true;
+
                     for (let otherPoint of pointsToCollideAgainst) {
-                        if (otherPoint.alive && !otherPoint.hasCheckedCollisionThisTurn &&
-                            !otherPoint.cured && !point.currentlyCollidingWith.includes(otherPoint)) {
+                        if ((point.infected || point.isDoctor) &&
+                            otherPoint.alive && !otherPoint.hasCheckedCollisionThisTurn &&
+                            !otherPoint.cured) {
                             // check if colliding
-                            if (point.isColliding(otherPoint)) {
+                            if (point.isColliding(otherPoint) && !point.currentlyCollidingWith.includes(otherPoint)) {
                                 // make sure you dont collide next frame
                                 point.currentlyCollidingWith.push(otherPoint);
                                 // now make a choice to infect or cure
-                                print("Der er sket en collision");
+                                // print("Der er sket en collision");
+                                
                             }
                             // if you are not colliding check if it should be removed from colliding list
                             else if (point.currentlyCollidingWith.includes(otherPoint)) {
@@ -142,8 +148,15 @@ class Person {
 
     isColliding(otherPerson) {
         let calculatedDistance = dist(this.x, this.y, otherPerson.x, otherPerson.y);
+        // let calculatedDistance = Person.myDist(this.x, this.y, otherPerson.x, otherPerson.y);
         let distanceSmallEnough = (calculatedDistance < (Person.diameter / 2 + Person.diameter / 2));
+        // let distanceSmallEnough = (calculatedDistance < 6.25);
         return distanceSmallEnough;
+    }
+
+    static myDist(x, y, nx, ny) {
+        let distance = (nx-x)*(nx-x)+(ny-y)*(ny-y);
+        return distance;
     }
 
     infect() {
@@ -166,8 +179,8 @@ class Grid {
 
     constructor() {
         let divisor = width / Person.diameter;
-        this.cellWidth = width / 50;
-        this.cellHeight = height / 50;
+        this.cellWidth = width / 40;
+        this.cellHeight = height / 40;
     }
 
     initializeGrid(listOfPersons) {
