@@ -14,6 +14,7 @@ function startProgram() {
     getUserInput();
     sim = new Simulation();
     programRunning = true;
+    Person.diameter = circleSize;
 
     print(`Programmet er startet. Følgende indstillinger er blevet indlæst: \nsimSize: ${simulationSize} \ndeathrate: ${deathrate} \nmoveType: ${movementType} \ncolType: ${collisionType}`)
 }
@@ -28,11 +29,13 @@ function getUserInput() {
     // sliders
     let peopleSlider = document.getElementById("peopleRange");
     let deathrateSlider = document.getElementById("deathrateRange");
+    let sizeSlider = document.getElementById("sizeRange");
     let movementTypeInput = $('input[name=optionsMovement]:radio:checked').select()[0].id;
     let collisionTypeInput = $('input[name=optionsCollisionType]:radio:checked').select()[0].id;
 
-    simulationSize = peopleSlider.value;
+    simulationSize = int(peopleSlider.value);
     deathrate = deathrateSlider.value/100;
+    circleSize = int(sizeSlider.value);
     movementType = movementTypeInput;
     collisionType = collisionTypeInput;
 }

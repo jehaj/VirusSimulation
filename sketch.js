@@ -2,6 +2,7 @@ let programRunning = true;
 
 let simulationSize;
 let deathrate;
+let circleSize;
 let movementType;
 let collisionType;
 
@@ -30,6 +31,18 @@ function draw() {
 
     } else {
         background(200, 20, 20);
+        getUserInput();
+        let rows = floor(sqrt(simulationSize));
+        let cols = floor(sqrt(simulationSize));
+        let spaceX = width/cols;
+        let spaceY = height/rows;
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                stroke(40, 40, 60);
+                strokeWeight(circleSize);
+                point(j*spaceX+spaceX/2, i*spaceY+spaceY/2);
+            }
+        }
     }
 }
 
