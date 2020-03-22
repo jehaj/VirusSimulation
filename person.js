@@ -19,24 +19,17 @@ class Simulation {
             let point = this.listOfPersons[i];
             point.hasCheckedCollisionThisTurn = true;
 
-            for (let j = 0; j < this.listOfPersons.length; j++) {
+            for (let j = i+1; j < this.listOfPersons.length; j++) {
                 let otherPoint = this.listOfPersons[j];
                 // check if you should collide: alive - hasnt collided
                 // - not cured - didnt collide last turn
-                if ((point.infected || otherPoint.infected) && (!point.infected && !point.infected) && !otherPoint.hasCheckedCollisionThisTurn) {
-                    otherPoint.hasCheckedCollisionThisTurn = true;
-                    // check if colliding
-                    if (point.isColliding(otherPoint) && !point.currentlyCollidingWith.includes(otherPoint)) {
-                        // make sure you dont collide next frame
+                if (!otherPoint.hasCheckedCollisionThisTurn && (point.infected || otherPoint.infected) && !(point.infected && otherPoint.infected)) {
+                    let areYouColliding = point.isColliding(otherPoint);
+                    if (areYouColliding && !point.currentlyCollidingWith.includes(otherPoint)) {
                         point.currentlyCollidingWith.push(otherPoint);
-                        // now make a choice to infect or cure
-                        // print("Der er sket en collision");
                         this.collision(point, otherPoint);
                         this.collision(otherPoint, point);
-
-                    }
-                    // if you are not colliding check if it should be removed from colliding list
-                    else if (point.currentlyCollidingWith.includes(otherPoint)) {
+                    } else if (!areYouColliding && point.currentlyCollidingWith.includes(otherPoint)) {
                         let index = point.currentlyCollidingWith.indexOf(otherPoint);
                         if (index !== -1) {
                             point.currentlyCollidingWith.splice(index, 1);

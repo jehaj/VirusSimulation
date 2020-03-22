@@ -3,6 +3,7 @@ let programRunning = true;
 let simulationSize;
 let deathrate;
 let movementType;
+let collisionType;
 
 let sim;
 
@@ -13,7 +14,7 @@ function setup() {
 
     // Move the canvas so it’s inside our <div id="sketch-holder">.
     canvas.parent('sketch-holder');
-    
+
     startProgram();
 }
 
@@ -22,11 +23,11 @@ function draw() {
     if (programRunning) {
         background(52, 58, 64);
         sim.move();
-        // sim.simpleCollision();
-        sim.advancedCollision();
+        if (collisionType == "optionOthersCollision") { sim.simpleCollision(); }
+        if (collisionType == "optionOurCollision") { sim.advancedCollision(); }
         // sim.highlightMouseCell();
         sim.display();
-        
+
     } else {
         background(200, 20, 20);
     }

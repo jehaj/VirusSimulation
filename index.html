@@ -98,14 +98,14 @@
                         <div class="mt-2" style="text-align: center;">
                           <div class="btn-group btn-group-toggle" data-toggle="buttons">
                             <label class="btn btn-secondary active">
-                              <input type="radio" name="options" id="optionNoise" checked> Støj
+                              <input type="radio" name="optionsMovement" id="optionNoise" checked> Støj
                             </label>
                             <label class="btn btn-secondary">
-                              <input type="radio" name="options" id="optionRandom"> Tilfældig
+                              <input type="radio" name="optionsMovement" id="optionRandom"> Tilfældig
                             </label>
                             <label class="btn btn-secondary disabled" data-toggle="tooltip" data-placement="top"
                               title="Denne funktion kommer senere. Forhåbentligt...">
-                              <input type="radio" name="options" id="optionCollision"> Kollision
+                              <input type="radio" name="optionsMovement" id="optionCollision"> Kollision
                             </label>
                           </div>
                         </div>
@@ -114,8 +114,9 @@
                     <!-- HEROVER ER RADIO BUTTONS TIL VALG AF BEVÆGELSE -->
                     <div class="row">
                       <div class="col-12">
-                        <div class="container mt-3" data-toggle="tooltip" data-placement="top" title="Ikke tilgængelig. Vil gøre det muligt, at have mere tætbefolket områder.">
-                          <button type="button" class="btn btn-block btn-warning disabled" data-toggle="button" 
+                        <div class="container mt-3" data-toggle="tooltip" data-placement="top"
+                          title="Ikke tilgængelig. Vil gøre det muligt, at have mere tætbefolket områder.">
+                          <button type="button" class="btn btn-block btn-warning disabled" data-toggle="button"
                             aria-pressed="false" autocomplete="off">
                             Simuler byer
                           </button>
@@ -165,6 +166,52 @@
         </div>
       </div>
 
+    </div>
+
+    <div class="row my-4">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">Ekstra information</div>
+          <div class="card-body">
+            <h3>Corona</h3>
+            <div class="row">
+              <div class="col-md-8">
+                <p> Du kan finde mere information på
+                  <a target="_blank" href="https://www.sst.dk/da/corona">sundhedsstyrelsen hjemmeside</a>
+                  . Ellers kan du på billedet se 5 råd, som er vigtige at kende.
+                </p>
+              </div>
+              <div class="col-md-4">
+                <img class="img-fluid" src="SST_Corona_Lille.jpg" alt="">
+              </div>
+            </div>
+            <h3>Programmet</h3>
+            <p>
+              Vi har arbejdet hårdt på programmet og sørget for at gøre
+              det så intuitivt som muligt. Derudover, har vi også lagt
+              stor vægt på, at det skal køre godt og performativt. En af (de måske
+              mærkelige) krav vi har haft, er at der skal kunne være
+              mange elementer i simulationen af gangen. Derfor har er
+              det muligt at have flere end 1000 elementer i simulationen
+              uden de store problemer, som andre simulationer vil have.
+              Du kan her afprøve vores metode og den "normale" som andre
+              bruger (Pas på når du bruger 'Andres', da simulationen kommer til at gå langsomt):
+            </p>
+            <div class="row justify-content-center">
+              <div class="btn-group btn-group-toggle mx-4" data-toggle="buttons">
+                <label class="btn btn-success active">
+                  <input type="radio" name="optionsCollisionType" id="optionOurCollision" autocomplete="off" checked>
+                  Vores
+                </label>
+                <label class="btn btn-danger">
+                  <input type="radio" name="optionsCollisionType" id="optionOthersCollision" autocomplete="off"> Andres
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
