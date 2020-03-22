@@ -24,7 +24,9 @@ function draw() {
         sim.move();
         // sim.simpleCollision();
         sim.advancedCollision();
+        sim.highlightMouseCell();
         sim.display();
+        
     } else {
         background(200, 20, 20);
     }
