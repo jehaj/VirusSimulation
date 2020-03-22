@@ -13,6 +13,40 @@ class Simulation {
         }
     }
 
+    simpleCollision() {
+        for (let i = 0; i < this.listOfPersons.length; i++) {
+            let point = this.listOfPersons[i];
+            point.hasCheckedCollisionThisTurn = true;
+
+            for (let j = i + 1; j < this.listOfPersons.length; j++) {
+                let otherPoint = this.listOfPersons[j];
+                // check if you should collide: alive - hasnt collided
+                // - not cured - didnt collide last turn
+                if (otherPoint.alive && !otherPoint.hasCheckedCollisionThisTurn && 
+                    !otherPoint.cured && !point.currentlyCollidingWith.includes(otherPoint)) {
+                        // check if colliding
+                        if (point.isColliding(otherPoint)) {
+                            // make sure you dont collide next frame
+                            point.currentlyCollidingWith.push(otherPoint);
+                            // now make a choice to infect or cure
+                            print("Der er sket en collision");
+                        } 
+                        // if you are not colliding check if it should be removed from colliding list
+                        else if (point.currentlyCollidingWith.includes(otherPoint)) {
+                            let index = point.currentlyCollidingWith.indexOf(otherPoint);
+                            if (index !== -1) {
+                                point.currentlyCollidingWith.splice(index, 1);
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    advancedCollision() {
+
+    }
+
     display() {
         for (let person of this.listOfPersons) {
             person.display();
@@ -32,6 +66,9 @@ class Person {
         this.infected = false;
         this.cured = false;
         this.isDoctor = false;
+
+        this.hasCheckedCollisionThisTurn = false;
+        this.currentlyCollidingWith = [];
 
         if (movementType == "optionNoise") {
             // flere variabler skal laves
@@ -57,6 +94,9 @@ class Person {
 
         this.x = constrain(this.x, 0, width);
         this.y = constrain(this.y, 0, height);
+
+        // has not collided yet
+        this.hasCheckedCollisionThisTurn = false;
     }
 
     display() {
@@ -67,7 +107,7 @@ class Person {
 
     isColliding(otherPerson) {
         let calculatedDistance = dist(this.x, this.y, otherPerson.x, otherPerson.y);
-        let distanceSmallEnough = calculatedDistance < (this.diameter/2 + otherPerson.diameter/2);
+        let distanceSmallEnough = (calculatedDistance < (Person.diameter / 2 + Person.diameter / 2));
         return distanceSmallEnough;
     }
 
