@@ -22,7 +22,8 @@ function draw() {
     if (programRunning) {
         background(52, 58, 64);
         sim.move();
-        sim.simpleCollision();
+        //sim.simpleCollision();
+        sim.advancedCollision();
         sim.display();
     } else {
         background(200, 20, 20);

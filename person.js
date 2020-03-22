@@ -22,29 +22,64 @@ class Simulation {
                 let otherPoint = this.listOfPersons[j];
                 // check if you should collide: alive - hasnt collided
                 // - not cured - didnt collide last turn
-                if (otherPoint.alive && !otherPoint.hasCheckedCollisionThisTurn && 
+                if (otherPoint.alive && !otherPoint.hasCheckedCollisionThisTurn &&
                     !otherPoint.cured && !point.currentlyCollidingWith.includes(otherPoint)) {
-                        // check if colliding
-                        if (point.isColliding(otherPoint)) {
-                            // make sure you dont collide next frame
-                            point.currentlyCollidingWith.push(otherPoint);
-                            // now make a choice to infect or cure
-                            print("Der er sket en collision");
-                        } 
-                        // if you are not colliding check if it should be removed from colliding list
-                        else if (point.currentlyCollidingWith.includes(otherPoint)) {
-                            let index = point.currentlyCollidingWith.indexOf(otherPoint);
-                            if (index !== -1) {
-                                point.currentlyCollidingWith.splice(index, 1);
-                            }
+                    // check if colliding
+                    if (point.isColliding(otherPoint)) {
+                        // make sure you dont collide next frame
+                        point.currentlyCollidingWith.push(otherPoint);
+                        // now make a choice to infect or cure
+                        print("Der er sket en collision");
+                    }
+                    // if you are not colliding check if it should be removed from colliding list
+                    else if (point.currentlyCollidingWith.includes(otherPoint)) {
+                        let index = point.currentlyCollidingWith.indexOf(otherPoint);
+                        if (index !== -1) {
+                            point.currentlyCollidingWith.splice(index, 1);
                         }
                     }
+                }
             }
         }
     }
 
     advancedCollision() {
+        this.grid = new Grid();
+        this.grid.initializeGrid(this.listOfPersons);
 
+        for (let i = 0; i < this.grid.rows.length; i += 2) {
+            let row = this.grid.rows[i];
+            for (let j = 0; j < row.length; j += 2) {
+                let cell = row[j];
+                let pointsToCollideAgainst = this.grid.rows[i][j].points.concat(this.grid.getNeighbouringPoints(i, j));
+
+                
+                for (let point of cell.points) {
+                    for (let otherPoint of pointsToCollideAgainst) {
+                        if (otherPoint.alive && !otherPoint.hasCheckedCollisionThisTurn &&
+                            !otherPoint.cured && !point.currentlyCollidingWith.includes(otherPoint)) {
+                            // check if colliding
+                            if (point.isColliding(otherPoint)) {
+                                // make sure you dont collide next frame
+                                point.currentlyCollidingWith.push(otherPoint);
+                                // now make a choice to infect or cure
+                                print("Der er sket en collision");
+                            }
+                            // if you are not colliding check if it should be removed from colliding list
+                            else if (point.currentlyCollidingWith.includes(otherPoint)) {
+                                let index = point.currentlyCollidingWith.indexOf(otherPoint);
+                                if (index !== -1) {
+                                    point.currentlyCollidingWith.splice(index, 1);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                
+            
+            }            
+        }
     }
 
     display() {
@@ -92,8 +127,8 @@ class Person {
 
         }
 
-        this.x = constrain(this.x, 0, width);
-        this.y = constrain(this.y, 0, height);
+        this.x = constrain(this.x, 0, width - 1);
+        this.y = constrain(this.y, 0, height - 1);
 
         // has not collided yet
         this.hasCheckedCollisionThisTurn = false;
@@ -122,5 +157,73 @@ class Person {
 
     die() {
         this.alive = false;
+    }
+}
+
+class Grid {
+    // this class makes rows containing cells
+    // these cells contains points
+
+    constructor() {
+        let divisor = width / Person.diameter;
+        this.cellWidth = width / 50;
+        this.cellHeight = height / 50;
+    }
+
+    initializeGrid(listOfPersons) {
+        this.rows = [];
+        let amountOfRows = height / this.cellHeight;
+        for (let i = 0; i < amountOfRows; i++) {
+            let amountOfColumns = ceil(width / this.cellWidth);
+            let newRow = [];
+            for (let j = 0; j < amountOfColumns; j++) {
+                let newCell = new Cell();
+                newRow.push(newCell);
+            }
+            this.rows.push(newRow);
+        }
+
+        this.putPointsInCells(listOfPersons);
+    }
+
+    putPointsInCells(listOfPoints) {
+        for (let point of listOfPoints) {
+            let row = floor(point.y / this.cellHeight);
+            let col = floor(point.x / this.cellWidth);
+
+            this.rows[row][col].points.push(point);
+        }
+    }
+
+    getNeighbouringPoints(row, cell) {
+        let returnPoints = [];
+        returnPoints = returnPoints.concat(this.returnPointsFromCell(row - 1, cell - 1));
+        returnPoints = returnPoints.concat(this.returnPointsFromCell(row - 1, cell));
+        returnPoints = returnPoints.concat(this.returnPointsFromCell(row - 1, cell + 1));
+    
+        returnPoints = returnPoints.concat(this.returnPointsFromCell(row, cell - 1));
+        returnPoints = returnPoints.concat(this.returnPointsFromCell(row, cell + 1));
+    
+        returnPoints = returnPoints.concat(this.returnPointsFromCell(row + 1, cell - 1));
+        returnPoints = returnPoints.concat(this.returnPointsFromCell(row + 1, cell));
+        returnPoints = returnPoints.concat(this.returnPointsFromCell(row + 1, cell + 1));
+    
+        return returnPoints;
+    }
+    
+    returnPointsFromCell(row, cell) {
+        try {
+            let pointsInCell = this.rows[row][cell].points;
+            return pointsInCell;
+        }
+        catch (err) {
+            return [];
+        }
+    }
+}
+
+class Cell {
+    constructor() {
+        this.points = [];
     }
 }
