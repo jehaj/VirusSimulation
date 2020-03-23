@@ -12,6 +12,8 @@ function updateTextValueFromSlider() {
 
 function startProgram() {
     getUserInput();
+    offsetTimer = millis();
+    resetGraph();
     sim = new Simulation();
     programRunning = true;
     Person.diameter = circleSize;

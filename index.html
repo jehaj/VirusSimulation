@@ -67,7 +67,8 @@
               <div class="col-12">
                 <p id="foolsSliderText" class="mb-0">Antal af fjolser </p>
                 <div class="slidecontainer mb-2 mt-1">
-                  <input style="width: 100%" type="range" min="0" max="10" value="5" class="slider btn-danger" id="foolsRange" disabled>
+                  <input style="width: 100%" type="range" min="0" max="10" value="5" class="slider btn-danger"
+                    id="foolsRange" disabled>
                 </div>
               </div>
             </div>
@@ -164,21 +165,51 @@
       </div>
     </div>
 
+    <!-- GRAPH -->
     <div class="row pt-4">
       <div class="col-md-4">
         <div class="card">
           <div class="card-header">Statistik</div>
-          <div class="card-body">table og stuff</div>
+          <div class="card-body">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Information</th>
+                  <th scope="col">Tal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Raske folk</td>
+                  <td><span id="healthyPeopleText"></span></td>
+                </tr>
+                <tr>
+                  <td>Syge folk</td>
+                  <td><span id="sickPeopleText"></span></td>
+                </tr>
+                <tr>
+                  <td>Helbredte folk</td>
+                  <td><span id="curedPeopleText"></span></td>
+                </tr>
+                <tr>
+                  <td>Døde folk</td>
+                  <td><span id="deadPeopleText"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <div class="col-md-8">
         <div class="card">
           <div class="card-header">Graf</div>
-          <div class="card-body">her skal der være en graf</div>
+          <div class="card-body">
+            <canvas id="myChart" width="400" height="153"></canvas>
+          </div>
         </div>
       </div>
-
     </div>
+    <!-- GRAPH END -->
 
     <div class="row my-4">
       <div class="col-md-12">
@@ -254,9 +285,12 @@
   </div>
 
   <!-- Optional JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
+  
   <script src="userInput.js"></script>
   <script src="person.js"></script>
   <script src="sketch.js"></script>
+  <script src="graph.js"></script>
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
     integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
@@ -271,7 +305,7 @@
   <script>
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
   </script>
   <!-- END - TOOLTIP (after js loaded) -->
 
