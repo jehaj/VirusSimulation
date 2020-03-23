@@ -32,15 +32,14 @@ function draw() {
     } else {
         background(200, 20, 20);
         getUserInput();
-        let rows = floor(sqrt(simulationSize));
-        let cols = floor(sqrt(simulationSize));
-        let spaceX = width/cols;
-        let spaceY = height/rows;
+        let squareGridWidth = sqrt((height*width)/simulationSize);
+        let rows = floor(height/squareGridWidth);
+        let cols = floor(width/squareGridWidth);
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
                 stroke(40, 40, 60);
                 strokeWeight(circleSize);
-                point(j*spaceX+spaceX/2, i*spaceY+spaceY/2);
+                point(j*squareGridWidth+squareGridWidth/2, i*squareGridWidth+squareGridWidth/2);
             }
         }
     }
