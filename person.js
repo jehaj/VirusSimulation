@@ -146,7 +146,7 @@ class Person {
         this.y = random(height);
         this.speed = random(1, 2);
 
-        this.diameter = 10;
+        this.diameter = circleSize;
 
         this.alive = true;
         this.infected = false;
