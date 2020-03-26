@@ -8,25 +8,29 @@ var myChart = new Chart(ctx, {
         datasets: [{
             label: 'Antal raske',
             data: [],
-            backgroundColor: ['rgba(0,0,255, 0)'],
+            fill: true,
+            backgroundColor: ['rgba(0,0,255, 0.5)'],
             borderColor: ['rgba(0,0,255, 1)'],
             pointRadius: 0,
         }, {
             label: 'Antal døde',
             data: [],
-            backgroundColor: ['rgba(0,0,0, 0)'],
+            fill: true,
+            backgroundColor: ['rgba(0,0,0, 0.5)'],
             borderColor: ['rgba(0,0,0, 1)'],
             pointRadius: 0,
         }, {
             label: 'Antal Syge',
             data: [],
-            backgroundColor: ['rgba(255,0,0, 0)'],
+            fill: true,
+            backgroundColor: ['rgba(255,0,0, 0.5)'],
             borderColor: ['rgba(255,0,0, 1)'],
             pointRadius: 1,
         }, {
             label: 'Antal helbredte',
             data: [],
-            backgroundColor: ['rgba(0,0,255, 0)'],
+            fill: true,
+            backgroundColor: ['rgba(0,255,0, 0.5)'],
             borderColor: ['rgba(255,0,0, 1)'],
             pointRadius: 1,
         }
@@ -35,11 +39,11 @@ var myChart = new Chart(ctx, {
     options: {
         scales: {
             yAxes: [{
+                stacked: true,
                 ticks: {
                     beginAtZero: true,
                 }
             }],
-
         }
     }
 });
@@ -53,7 +57,7 @@ function resetGraph() {
 
 function updateGraph() {
     myChart.data.labels.push(round(millis() / 1000) - round(offsetTimer / 1000));
-    
+
     let datasets = myChart.data.datasets;
 
     datasets[0].data.push(healthyPeople);

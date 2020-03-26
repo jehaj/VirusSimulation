@@ -5,12 +5,21 @@ class Simulation {
             this.listOfPersons.push(new Person());
         }
         //print("Har lavet en sim med " + simulationSize + " personer");
-        this.listOfPersons[floor(this.listOfPersons.length / 2)].infect();
+        let pointStart = this.listOfPersons[floor(this.listOfPersons.length / 2)];
+        pointStart.infect();
+        let deathNumber = random();
+        if (deathNumber <= deathrate) {
+            pointStart.timeUntilDeath = millis() + random(10, 15) * 1000;
+            pointStart.shouldDie = true;
+        }
     }
 
     move() {
         for (let person of this.listOfPersons) {
-            person.move();
+            if (person.alive) {
+                person.move();
+
+            }
         }
     }
 
@@ -19,11 +28,11 @@ class Simulation {
             let point = this.listOfPersons[i];
             point.hasCheckedCollisionThisTurn = true;
 
-            for (let j = i+1; j < this.listOfPersons.length; j++) {
+            for (let j = i + 1; j < this.listOfPersons.length; j++) {
                 let otherPoint = this.listOfPersons[j];
                 // check if you should collide: alive - hasnt collided
                 // - not cured - didnt collide last turn
-                if (!otherPoint.hasCheckedCollisionThisTurn && (point.infected || otherPoint.infected) && !(point.infected && otherPoint.infected)) {
+                if ((point.alive && otherPoint.alive) && !otherPoint.hasCheckedCollisionThisTurn && (point.infected || otherPoint.infected) && !(point.infected && otherPoint.infected)) {
                     let areYouColliding = point.isColliding(otherPoint);
                     if (areYouColliding && !point.currentlyCollidingWith.includes(otherPoint)) {
                         point.currentlyCollidingWith.push(otherPoint);
@@ -52,7 +61,7 @@ class Simulation {
 
                 for (let point of cell.points) {
                     for (let otherPoint of pointsToCollideAgainst) {
-                        if (!otherPoint.hasCheckedCollisionThisTurn && (point.infected || otherPoint.infected) && !(point.infected && otherPoint.infected)) {
+                        if ((point.alive && otherPoint.alive) && !otherPoint.hasCheckedCollisionThisTurn && (point.infected || otherPoint.infected) && !(point.infected && otherPoint.infected)) {
                             let areYouColliding = point.isColliding(otherPoint);
                             if (areYouColliding && !point.currentlyCollidingWith.includes(otherPoint)) {
                                 point.currentlyCollidingWith.push(otherPoint);
@@ -79,6 +88,11 @@ class Simulation {
             let randomNumber = random();
             if (randomNumber <= Person.chanceOfInfection) {
                 otherPoint.infect();
+                let deathNumber = random();
+                if (deathNumber <= deathrate) {
+                    otherPoint.timeUntilDeath = millis() + random(1, 3) * 1000;
+                    otherPoint.shouldDie = true;
+                }
             }
         } else if (point.isDoctor) {
 
@@ -120,6 +134,8 @@ class Person {
         this.isDoctor = false;
 
         Person.chanceOfInfection = 100 / 100;
+        this.shouldDie = false;
+        this.timeUntilDeath = 0;
 
         this.hasCheckedCollisionThisTurn = false;
         this.currentlyCollidingWith = [];
@@ -135,6 +151,11 @@ class Person {
     }
 
     move() {
+        // check if dead
+        if (this.shouldDie && this.timeUntilDeath < millis() && this.alive) {
+            this.die();
+        }
+
         if (movementType == "optionNoise") {
             this.x += map(noise(this.time), 0, 0.95, -this.speed, this.speed);
             this.y += map(noise(this.time + 1000), 0, 0.95, -this.speed, this.speed);
@@ -195,6 +216,9 @@ class Person {
 
     die() {
         this.alive = false;
+        this.infected = false;
+        this.cured = false;
+        this.isDoctor = false;
     }
 }
 
