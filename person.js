@@ -5,13 +5,20 @@ class Simulation {
             this.listOfPersons.push(new Person());
         }
         //print("Har lavet en sim med " + simulationSize + " personer");
+        // infect the first person
         let pointStart = this.listOfPersons[floor(this.listOfPersons.length / 2)];
         pointStart.infect();
         let deathNumber = random();
         if (deathNumber <= deathrate) {
-            pointStart.timeUntilDeath = millis() + random(10, 15) * 1000;
+            pointStart.timeUntilDeath = millis() + random(20, 15) * 1000;
             pointStart.shouldDie = true;
         }
+        //create fools
+        for (let i = 0; i < amountOfFools; i++) {
+            this.listOfPersons[i].isFool = true;
+            this.listOfPersons[i].diameter += 5;
+        }
+        Person.chanceOfInfection = infectionrate / 100;
     }
 
     move() {
@@ -38,6 +45,8 @@ class Simulation {
                         point.currentlyCollidingWith.push(otherPoint);
                         this.collision(point, otherPoint);
                         this.collision(otherPoint, point);
+                        countCOLLISION += 1;
+
                     } else if (!areYouColliding && point.currentlyCollidingWith.includes(otherPoint)) {
                         let index = point.currentlyCollidingWith.indexOf(otherPoint);
                         if (index !== -1) {
@@ -67,6 +76,8 @@ class Simulation {
                                 point.currentlyCollidingWith.push(otherPoint);
                                 this.collision(point, otherPoint);
                                 this.collision(otherPoint, point);
+                                countCOLLISION += 1;
+
                             } else if (!areYouColliding && point.currentlyCollidingWith.includes(otherPoint)) {
                                 let index = point.currentlyCollidingWith.indexOf(otherPoint);
                                 if (index !== -1) {
@@ -84,14 +95,23 @@ class Simulation {
     }
 
     collision(point, otherPoint) {
-        if (point.infected) {
-            let randomNumber = random();
-            if (randomNumber <= Person.chanceOfInfection) {
+        if (point.infected && !otherPoint.infected) {
+            if (point.isFool || otherPoint.isFool) {
                 otherPoint.infect();
                 let deathNumber = random();
                 if (deathNumber <= deathrate) {
-                    otherPoint.timeUntilDeath = millis() + random(1, 3) * 1000;
+                    otherPoint.timeUntilDeath = millis() + random(3, 7) * 1000;
                     otherPoint.shouldDie = true;
+                }
+            } else {
+                let randomNumber = random();
+                if (randomNumber <= Person.chanceOfInfection) {
+                    otherPoint.infect();
+                    let deathNumber = random();
+                    if (deathNumber <= deathrate) {
+                        otherPoint.timeUntilDeath = millis() + random(3, 7) * 1000;
+                        otherPoint.shouldDie = true;
+                    }
                 }
             }
         } else if (point.isDoctor) {
@@ -126,12 +146,13 @@ class Person {
         this.y = random(height);
         this.speed = random(1, 2);
 
-        Person.diameter = 10;
+        this.diameter = 10;
 
         this.alive = true;
         this.infected = false;
         this.cured = false;
         this.isDoctor = false;
+        this.isFool = false;
 
         Person.chanceOfInfection = 100 / 100;
         this.shouldDie = false;
@@ -152,7 +173,7 @@ class Person {
 
     move() {
         // check if dead
-        if (this.shouldDie && this.timeUntilDeath < millis() && this.alive) {
+        if (this.shouldDie && this.timeUntilDeath <= millis() && this.alive) {
             this.die();
         }
 
@@ -175,7 +196,7 @@ class Person {
     }
 
     display() {
-        strokeWeight(Person.diameter);
+        strokeWeight(this.diameter);
         // change color
         if (this.infected) {
             stroke(255, 0, 0);
@@ -188,13 +209,20 @@ class Person {
         } else {
             stroke(255);
         }
+        if (this.isFool) {
+            push();
+            strokeWeight(this.diameter + 5);
+            stroke(0, 0, 255);
+            point(this.x, this.y);
+            pop();
+        }
         point(this.x, this.y);
     }
 
     isColliding(otherPerson) {
         let calculatedDistance = dist(this.x, this.y, otherPerson.x, otherPerson.y);
         // let calculatedDistance = Person.myDist(this.x, this.y, otherPerson.x, otherPerson.y);
-        let distanceSmallEnough = (calculatedDistance < (Person.diameter / 2 + Person.diameter / 2));
+        let distanceSmallEnough = (calculatedDistance < (this.diameter / 2 + this.diameter / 2));
         // let distanceSmallEnough = (calculatedDistance < 6.25);
         return distanceSmallEnough;
     }
@@ -207,6 +235,7 @@ class Person {
     infect() {
         this.infected = true;
         this.currentlyCollidingWith = [];
+        countINFECTIONS += 1;
     }
 
     cure() {

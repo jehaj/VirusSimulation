@@ -2,9 +2,14 @@ let programRunning = true;
 
 let simulationSize;
 let deathrate;
+let infectionrate;
 let circleSize;
+let amountOfFools;
 let movementType;
 let collisionType;
+
+let countCOLLISION = 0;
+let countINFECTIONS = 0;
 
 let healthyPeople;
 let sickPeople;
@@ -49,7 +54,13 @@ function draw() {
         let cols = floor(width / squareGridWidth);
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
-                stroke(40, 40, 60);
+                let pointNumber = (i)*cols+(j);
+                if (pointNumber < amountOfFools) {
+                    stroke(40, 255, 0);
+                } else {
+                    stroke(40, 40, 60);
+
+                }
                 strokeWeight(circleSize);
                 point(j * squareGridWidth + squareGridWidth / 2, i * squareGridWidth + squareGridWidth / 2);
             }

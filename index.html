@@ -65,10 +65,18 @@
             </div>
             <div class="row">
               <div class="col-12">
+                <p id="infectionrateSliderText" class="mb-0">Hygiejne: </p>
+                <div class="slidecontainer mb-2 mt-1 ">
+                  <input style="width: 100%" type="range" min="0" max="100" value="90" class="slider"
+                    id="infectionrateRange">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
                 <p id="foolsSliderText" class="mb-0">Antal af fjolser </p>
                 <div class="slidecontainer mb-2 mt-1">
-                  <input style="width: 100%" type="range" min="0" max="10" value="5" class="slider btn-danger"
-                    id="foolsRange" disabled>
+                  <input style="width: 100%" type="range" min="0" max="100" value="10" class="slider" id="foolsRange">
                 </div>
               </div>
             </div>
@@ -174,7 +182,7 @@
             <table class="table table-hover">
               <thead>
                 <tr>
-                  <th scope="col">Information</th>
+                  <th scope="col">Type</th>
                   <th scope="col">Tal</th>
                 </tr>
               </thead>
@@ -219,9 +227,17 @@
             <h3>Corona</h3>
             <div class="row">
               <div class="col-md-8">
-                <p> Du kan finde mere information på
-                  <a target="_blank" href="https://www.sst.dk/da/corona">sundhedsstyrelsen hjemmeside</a>
-                  . Ellers kan du på billedet se 5 råd, som er vigtige at kende. (Tryk på billedet for at forstørre det)
+                <p> <b>Hvis du er rask – beskyt dig selv for at beskytte andre</b> <br>
+                  Følg rådene om håndvask og håndsprit. Vis hensyn og begrænse fysisk kontakt og sociale aktiviteter.
+                  <br>
+                  <b>Hvis du har hoste, let feber eller forkølelse – bliv hjemme, indtil du er rask</b> <br>
+                  Hold afstand til dine nærmeste, og undgå kontakt med andre uden for hjemmet.
+                  <br>
+                  <b>Hvis du har problemer med vejrtrækningen, forværring af symptomer eller er syg over flere dage – ring til lægen</b><br>
+                  Det er vigtigt, at du ringer først og ikke møder op i venteværelset, da du kan smitte andre.
+                  <br><br>
+                  Du kan finde mere information på
+                  <a target="_blank" href="https://www.sst.dk/da/corona">sundhedsstyrelsen hjemmeside</a>. Se billedet til højre for 5 råd, der er vigtige at kende. (Tryk på billedet for at forstørre det)
                 </p>
               </div>
               <div class="col-md-4">
@@ -286,7 +302,7 @@
 
   <!-- Optional JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
-  
+
   <script src="userInput.js"></script>
   <script src="person.js"></script>
   <script src="sketch.js"></script>
